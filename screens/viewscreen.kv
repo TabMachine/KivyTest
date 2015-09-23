@@ -1,36 +1,25 @@
 #:import KivyLexer kivy.extras.highlight.KivyLexer
 
 <ViewScreen>:
+	#Toolbar
+	label_widget: Dropdown.__self__
+	layout: layout
+	tabarea: tabarea
 
-<LoadDialog>:
-	label_id: Dropdown.__self__
-    BoxLayout:
-        size: root.size
-        pos: root.pos
-        orientation: "vertical"
-        FileChooserListView:
-            id: filechooser
-
-        BoxLayout:
-            size_hint_y: .15
-			
-            Button:
-				#size_hint: (.5,.20)
-                text: "Cancel"
-                on_release: root.cancel()
-
-            Button:
-				#size_hint: (.5,.2)
-                text: "Load"
-                on_release: root.load(filechooser.path, filechooser.selection)
-	# Editor Toolbar
 	BoxLayout:
-		Widget
-		Widget
+		id: layout
+		size: self.parent.size
+		orientation: 'vertical'
+
+		TabArea:
+			id: tabarea
+
+		#Dropdown menu
 		Button:
 			text: 'Tools'
-			size_hint: (1, .15)
-			on_release: Dropdown.open(self)
+			size_hint: (.12, .10)
+			center_x: root.center_x
+			on_release: dropdown.open(self)
 		DropDown:
 			id: Dropdown
 			on_parent: self.dismiss()
@@ -47,8 +36,53 @@
 				height: 45
 				size_hint: (None, None)
 
+<LoadDialog>:
+	#label_id: Dropdown.__self__
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+
+        BoxLayout:
+            size_hint_y: .15
+
+            Button:
+				#size_hint: (.5,.20)
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+				#size_hint: (.5,.2)
+                text: "Load"
+                on_release: root.load(filechooser.path, filechooser.selection)
+
+<TabArea>:
+	# Ids to access the canvas in Python
+	tabCanvas: tabCanvas
+	slide: slide
+
+	ScrollView:
+		BoxLayout:
+			orientation: 'vertical'
+			Widget:
+				id: tabCanvas
+				size_hint_x: 10
+				size_hint_y: 5
+			Slider:
+				id: slide
+				min: 0
+				max: 1
+				value: 25
+				orientation: 'horizontal'
+				step: 0.01
+				size_hint: (1, .3)
+				#value: scroll_change()
+				#on_scroll_x: slider_change()
+
 <SaveDialog>:
-	label_widget: Dropdown.__self__
+	#label_widget: Dropdown.__self__
     text_input: text_input
     BoxLayout:
         size: root.size*.75
@@ -74,29 +108,3 @@
             Button:
                 text: "Save"
                 on_release: root.save(filechooser.path, text_input.text)
-	
-	# Editor Toolbar
-	BoxLayout:
-		Widget
-		Widget
-		Button:
-			text: 'Tools'
-			size_hint: (1, .15)
-			on_release: Dropdown.open(self)
-		Widget
-		Widget
-		DropDown:
-			id: Dropdown
-			on_parent: self.dismiss()
-			Button:
-				text: 'Play'
-				height: 45
-				size_hint: (None, None)
-			Button:
-				text: 'Pause'
-				height: 45
-				size_hint: (None, None)
-			Button:
-				text: 'Help'
-				height: 45
-				size_hint: (None, None)

@@ -3,7 +3,7 @@
     height: '80sp'
 
 <TitleScreen>:
-	label_id: Dropdown.__self__
+	#label_id: Dropdown.__self__
     BoxLayout:
         id: title_layout
         size_hint: None, None
@@ -19,29 +19,3 @@
         #Label:
         #    id: test_label
         #    text: root.test_string
-	BoxLayout:
-		Widget
-		Widget
-		Button:
-			text: 'Tools'
-			size_hint: (1, .10)
-			on_release: Dropdown.open(self)
-		Widget
-		Widget
-		DropDown:
-			id: Dropdown
-			on_parent: self.dismiss()
-			Button:
-				text: 'Play'
-				height: 45
-				size_hint: (None, None)
-			Button:
-				text: 'Pause'
-				height: 45
-				size_hint: (None, None)
-			Button:
-				text: 'Help'
-				height: 45
-				size_hint: (None, None)
-		
-		

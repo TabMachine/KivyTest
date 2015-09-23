@@ -78,47 +78,31 @@ class CreateScreen(Screen):
     def on_enter(self):
         print('Enter create screen')
 
-class ViewScreen(Screen):
-    loadfile = ObjectProperty(None)
-    savefile = ObjectProperty(None)
+class TabArea(BoxLayout):
+    tabCanvas = ObjectProperty(None)
+    slide = ObjectProperty(None)
 
-    def on_enter(self):
-        # starts the file manager when this screen is entered
-        content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
-        self._popup = Popup(title="Load file", content=content, size_hint=(0.4, 0.8))
-        self._popup.open()
+    """
+    # Draw the tab on the screen
+    wid = Widget(size_hint=(10, 0.33), pos_hint=(0.5, 0))
+    self.drawtab(tab, wid)
 
-    def dismiss_popup(self):
-        self._popup.dismiss()
+    slide = Slider(min=0, max=1, value=25, orientation='horizontal', step=0.01, size_hint=(1, 0.1))
+    slide.bind(value=partial(self.scroll_change, slide))
 
-    def load(self, path, filename):
-        #loads the file
-        tab = open(os.path.join(path, filename[0]))
-        self._popup.dismiss()
+    scrl = ScrollView()
+    scrl.bind(scroll_x=partial(self.slider_change, slide))
+    scrl.add_widget(wid)
 
-        # Draw the tab on the screen
-        wid = Widget(size_hint=(10, 0.33), pos_hint=(0.5, 0))
-        self.drawtab(tab, wid)
+    self.add_widget(slide)
+    self.add_widget(scrl)
+    """
 
-        slide = Slider(min=0, max=1, value=25, orientation='horizontal', step=0.01, size_hint=(1, 0.1))
-        slide.bind(value=partial(self.scroll_change, slide))
-
-        scrl = ScrollView()
-        scrl.bind(scroll_x=partial(self.slider_change, slide))
-        scrl.add_widget(wid)
-
-        self.add_widget(slide)
-        self.add_widget(scrl)
-
-    def show_save(self):
-        content = SaveDialog(save=self.save, cancel=self.dismiss_popup)
-        print(self.save)
-        self._popup = Popup(title="Save file", content=content, size_hint=(0.9, 0.9))
-        self._popup.open()
-
-    def drawtab(self, tab, wid):
+    def drawtab(self, tab):
         # Required tab pre-processing:
         # 1. Between brackets (|) enforce a bar width (set number of characters)
+
+        wid = self.tabCanvas
 
         lineheight = 32
         startheight = 6 * lineheight
@@ -134,9 +118,7 @@ class ViewScreen(Screen):
             # Parse by character, translating input to graphical output
             with wid.canvas:
                 for j in range(len(line)):
-                    print(j)
                     thischar = line[j]
-                    #print(thischar)
                     if thischar == '\n' or thischar == ':':
                         pass
                     elif j == 0:
@@ -146,13 +128,11 @@ class ViewScreen(Screen):
                                   size=(32, 32))
                     elif thischar == "|" and j > 0:
                         # Plus bar
-                        #print("Making vertical line")
                         Rectangle(source='atlas://Assets/main/plusbar',
                                   pos=(j*CHAR_WIDTH, startheight-(i*lineheight)),
                                   size=(32, 32))
                     elif thischar == "-":
                         # Horizontal line
-                        #print("Making horizontal line")
                         Rectangle(source='atlas://Assets/main/bar',
                                   pos=(j*CHAR_WIDTH, startheight-(i*lineheight)),
                                   size=(32, 32))
@@ -191,14 +171,12 @@ class ViewScreen(Screen):
 
                                 # Wasn't double digit, draw it alone
                                 if not nextfound:
-                                    #print("Making " + thischar)
                                     Rectangle(source=('atlas://Assets/main/norm' + thischar),
                                               pos=(j*CHAR_WIDTH, startheight-(i*lineheight)),
                                               size=(32, 32))
 
                             # It's just a lonely single digit, draw it
                             else:
-                                #print("Making " + thischar)
                                 Rectangle(source=('atlas://Assets/main/norm' + thischar),
                                           pos=(j*CHAR_WIDTH, startheight-(i*lineheight)),
                                           size=(32, 32))
@@ -217,6 +195,35 @@ class ViewScreen(Screen):
     def slider_change(self, slide, instance, value):
         if value >= 0:
             slide.value = value
+
+
+class ViewScreen(Screen):
+    loadfile = ObjectProperty(None)
+    savefile = ObjectProperty(None)
+    tabarea = ObjectProperty(None)
+
+    def on_enter(self):
+        # starts the file manager when this screen is entered
+        content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Load file", content=content, size_hint=(0.4, 0.8))
+        self._popup.open()
+
+    def dismiss_popup(self):
+        self._popup.dismiss()
+
+    def load(self, path, filename):
+        #loads the file
+        tab = open(os.path.join(path, filename[0]))
+        self._popup.dismiss()
+
+        # Makes instance of tab area and draws the tab into it
+        self.tabarea.drawtab(tab)
+
+    def show_save(self):
+        content = SaveDialog(save=self.save, cancel=self.dismiss_popup)
+        print(self.save)
+        self._popup = Popup(title="Save file", content=content, size_hint=(0.9, 0.9))
+        self._popup.open()
 
 #main widget of the app
 class TabMachine(BoxLayout):

@@ -15,14 +15,15 @@
         Label:
             id: test_label
             text: 'This is the create screen'
-	
-	#Edit Toolbar		
+
+	#Edit Toolbar
 	BoxLayout:
 		Widget
 		Widget
 		Button:
 			text: 'Tools'
 			size_hint: (1, .10)
+            pos_hint: {'center': 0.5}
 			on_release: Dropdown.open(self)
 		Widget
 		Widget
@@ -41,5 +42,3 @@
 				text: 'Help'
 				height: 45
 				size_hint: (None, None)
-		
-
